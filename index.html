@@ -24,9 +24,10 @@
     function openWindow() {
       var width = screen.width * 0.5;  // 50% of the screen width
       var height = 600;  // Fixed height of the window
+      var top = 50;
 
       // Open the pop-up window
-      newWindow = window.open('popup.html', 'newWindow', 'width=' + width + ',height=' + height);
+      newWindow = window.open('popup.html', 'newWindow', 'width=' + width + ',height=' + height + ',top=' + top);
       
       // Monitor focus and refocus the window if it loses focus
       monitorFocus(newWindow);
@@ -69,7 +70,7 @@
         var windowHeight = win.innerHeight;
 
         // Position the sidebar on the right side of the window
-        sidebar.style.left = (windowX + windowWidth - sidebar.offsetWidth + 50) + 'px'; // 10px margin from right edge
+        sidebar.style.left = (windowX + windowWidth - sidebar.offsetWidth + 60) + 'px'; // 10px margin from right edge
         sidebar.style.top = windowY + 'px'; // Align sidebar vertically with the window
         sidebar.style.height = windowHeight + 'px'; // Make sidebar height match the window's height
 

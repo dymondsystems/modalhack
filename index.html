@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>modal hack</title>
+  <style>
+    #popUpSidebar {
+      position: fixed;
+      width: 50px; /* Sidebar width */
+      background-color: #007bff;
+      color: white;
+      z-index: 9999;
+      transition: all 0.2s ease; /* Smooth transition for sidebar movement */
+      display: none; /* Initially hidden */
+    }
+  </style>
+  <script>
+    var newWindow;
+    var interval;
+    var originalSidebarPosition = { left: '20px', top: '0px' }; // Store original sidebar position
+
+    // Function to open the pop-up window and track its position
+    function openWindow() {
+      var width = screen.width * 0.5;  // 50% of the screen width
+      var height = 600;  // Fixed height of the window
+
+      // Open the pop-up window
+      newWindow = window.open('popup.html', 'newWindow', 'width=' + width + ',height=' + height);
+      
+      // Monitor focus and refocus the window if it loses focus
+      monitorFocus(newWindow);
+
+      // Track the position of the window every 100ms and update the sidebar
+      interval = setInterval(function() {
+        if (newWindow && !newWindow.closed) {
+          updateSidebarPosition(newWindow);
+          checkWindowMinimized(newWindow);  // Check if the window is minimized
+        } else {
+          hideSidebar(); // Hide sidebar when the window is closed or minimized
+          clearInterval(interval); // Stop tracking when the window is closed
+        }
+      }, 100);
+    }
+
+    // Function to monitor focus and refocus the window if it loses focus
+    function monitorFocus(windowRef) {
+      var monitorInterval = setInterval(function() {
+        if (windowRef && !windowRef.closed) {
+          if (windowRef !== window) {
+            windowRef.focus(); // Refocus the window if it loses focus
+          }
+        } else {
+          clearInterval(monitorInterval); // Stop monitoring if the window is closed
+        }
+      }, 100);
+    }
+
+    // Function to update the sidebar's position to match the pop-up window
+    function updateSidebarPosition(win) {
+      var sidebar = document.getElementById('popUpSidebar');
+      if (win && sidebar) {
+        // Get the current position of the window on the screen
+        var windowX = win.screenX || win.screenLeft;  // Get the window's X position
+        var windowY = win.screenY || win.screenTop;   // Get the window's Y position
+
+        // Get window dimensions
+        var windowWidth = win.innerWidth;
+        var windowHeight = win.innerHeight;
+
+        // Position the sidebar on the right side of the window
+        sidebar.style.left = (windowX + windowWidth - sidebar.offsetWidth - 10) + 'px'; // 10px margin from right edge
+        sidebar.style.top = windowY + 'px'; // Align sidebar vertically with the window
+        sidebar.style.height = windowHeight + 'px'; // Make sidebar height match the window's height
+
+        // Ensure sidebar is visible
+        sidebar.style.display = 'block';
+      }
+    }
+
+    // Function to check if the window is minimized (small size or visibility changes)
+    function checkWindowMinimized(win) {
+      var sidebar = document.getElementById('popUpSidebar');
+      if (win && sidebar) {
+        var windowWidth = win.innerWidth;
+        var windowHeight = win.innerHeight;
+
+        // If the window is minimized (i.e., width or height is zero), hide the sidebar
+        if (windowWidth === 0 || windowHeight === 0) {
+          hideSidebar();
+        }
+      }
+    }
+
+    // Function to hide the sidebar
+    function hideSidebar() {
+      var sidebar = document.getElementById('popUpSidebar');
+      if (sidebar) {
+        sidebar.style.display = 'none'; // Hide the sidebar
+      }
+    }
+
+    // Function to reset the sidebar's position to its original state
+    function resetSidebarPosition() {
+      var sidebar = document.getElementById('popUpSidebar');
+      if (sidebar) {
+        // Reset the sidebar position to its original location
+        sidebar.style.left = originalSidebarPosition.left;
+        sidebar.style.top = originalSidebarPosition.top;
+        sidebar.style.height = '100vh'; // Reset sidebar height to full viewport height
+      }
+    }
+    
+    // Function to change the URL in the pop-up window when a button is clicked
+    function changeWindowUrl(url) {
+      if (newWindow && !newWindow.closed) {
+        newWindow.location.href = url;  // Change the pop-up window's URL
+      }
+    }
+  </script>
+</head>
+<body>
+  <div id="popUpSidebar">
+   <button onclick="changeWindowUrl('https://example.com')">Page 1</button>
+    <button onclick="changeWindowUrl('https://example.com/blog')">Page 2</button>
+    <button onclick="changeWindowUrl('https://example.com/contact')">Page 3</button>
+  </div>
+  <button onclick="openWindow()">Open Pop-up Window (50% width)</button>
+</body>
+</html>

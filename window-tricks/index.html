@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pop-up Window with Focus Enforcement</title>
+  <style>
+    #stopFocusButton, #startFocusButton {
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+  </style>
+  <script>
+    var newWindow;
+    var monitorInterval;
+    var focusEnforced = true; // Flag to track if focus enforcement is active
+    var hoverActivated = false; // Flag to track if hover has deactivated the focus enforcement
+
+    // Function to open the pop-up window
+    function openWindow() {
+      var width = 600;  // Fixed width of the window
+      var height = 400;  // Fixed height of the window
+
+      // Open the pop-up window
+      newWindow = window.open('https://example.com', 'newWindow', 'width=' + width + ',height=' + height);
+
+      // Start monitoring the window's focus and refocus if needed
+      monitorFocus(newWindow);
+    }
+
+    // Function to monitor the focus of the pop-up window
+    function monitorFocus(windowRef) {
+      monitorInterval = setInterval(function() {
+        if (windowRef && !windowRef.closed && focusEnforced) {
+          if (windowRef !== window) {
+            windowRef.focus(); // Refocus the window if it loses focus
+          }
+        }
+      }, 100);
+    }
+
+    // Function to stop the focus enforcement when the hover button is hovered
+    function stopFocusOnHover() {
+      focusEnforced = false;  // Disable focus enforcement
+      hoverActivated = true;  // Set hoverActivated flag to true
+    }
+
+    // Function to resume the focus enforcement
+    function resumeFocus() {
+      focusEnforced = true;  // Re-enable focus enforcement
+    }
+
+    // Function to resume the focus enforcement when the hover ends
+    function resumeFocusOnHover() {
+      // Do nothing, focus enforcement stays off once the button is hovered
+    }
+
+    // Function to close the pop-up window
+    function closeWindow() {
+      if (newWindow && !newWindow.closed) {
+        newWindow.close();
+      }
+      clearInterval(monitorInterval); // Stop monitoring if the window is closed
+    }
+  </script>
+</head>
+<body>
+  <button id="stopFocusButton" 
+          onmouseover="stopFocusOnHover()" 
+          onmouseout="resumeFocusOnHover()">
+    Hover to Stop Focus Enforcement
+  </button>
+  <button onclick="openWindow()">Open Pop-up Window</button>
+  <button onclick="closeWindow()">Close Pop-up Window</button>
+  <button id="startFocusButton" onclick="resumeFocus()">Re-enable Focus Enforcement</button>
+</body>
+</html>

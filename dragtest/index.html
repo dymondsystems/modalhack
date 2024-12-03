@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pop-up Window Control</title>
+  <script>
+    var newWindow1, newWindow2; // Variables to store the two pop-up windows
+
+    // Function to open the first pop-up window
+    function openWindow1() {
+      newWindow1 = window.open('https://dymond.systems/imagedrag', 'newWindow1', 'width=300,height=300');
+      monitorFocus(newWindow1); // Monitor focus for the first window
+    }
+
+    // Function to open the second pop-up window
+    function openWindow2() {
+      newWindow2 = window.open('https://docs.google.com/forms/d/e/1FAIpQLSfT-2uUQ8VDuB4ticvLIbkXR_EgQ3zltXb9pghZcR6y1tYLsA/viewform', 'newWindow2', 'width=100%,height=300, left=600,');
+      monitorFocus(newWindow2); // Monitor focus for the second window
+    }
+
+    // Function to monitor focus and refocus the window if it loses focus
+    function monitorFocus(windowRef) {
+      var monitorInterval = setInterval(function() {
+        if (windowRef && !windowRef.closed) {
+          if (windowRef !== window) {
+            windowRef.focus(); // Refocus the window if it loses focus
+          }
+        } else {
+          clearInterval(monitorInterval); // Stop monitoring if the window is closed
+        }
+      }, 100);
+    }
+
+    // Function to close the first pop-up window
+    function closeWindow1() {
+      if (newWindow1 && !newWindow1.closed) {
+        newWindow1.close();
+      }
+    }
+
+    // Function to close the second pop-up window
+    function closeWindow2() { 
+      if (newWindow2 && !newWindow2.closed) {
+        newWindow2.close();
+      }
+    }
+  </script>
+  
+  <script>
+    var newWindow;
+
+    // Function to open the pop-up window and load a URL with 100% width of thex screen
+    function openWindow() {
+      var width = screen.width;  // Get the screen's width
+      var height = 600;  // Set a fixed height for the window
+      var url = 'https://example.com';  // URL to load inside the pop-up window
+
+      // Open the pop-up window with 100% width and fixed height
+      newWindow = window.open(url, 'newWindow', 'width=' + width + ',height=' + height);
+    }
+  </script>
+</head>
+<body>
+  <button onclick="openWindow1()" "openWindow2()">Open Pop-up Window 1</button>
+  <button onclick="openWindow2()">Open Pop-up Window 2</button>
+  <button onclick="closeWindow1()">Close Pop-up Window 1</button>
+  <button onclick="closeWindow2()">Close Pop-up Window 2</button>
+  <button onclick="openWindow()">Open Pop-up Window with 100% Width</button>
+</body>
+</html>

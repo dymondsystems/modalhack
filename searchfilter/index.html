@@ -1,0 +1,105 @@
+ <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  
+
+
+
+
+<div class="container wrapper">
+  <br>
+  <h2>Portfolio Filter with Integrated Search and Filter</h2>
+  <hr>
+  <div class="pull-right">
+    <button class="btn btn-small btn-primary filter-button" data-toggle="portfilter" data-filter="all">All</button>
+    <button class="btn btn-small btn-primary filter-button" data-toggle="portfilter" data-filter="art">Art</button>
+    <button class="btn btn-small btn-primary filter-button" data-toggle="portfilter" data-filter="media">Media</button>
+    <button class="btn btn-small btn-primary filter-button" data-toggle="portfilter" data-filter="brand">Brand</button>
+  </div>
+  <div class="clearfix"></div>
+  <br>
+
+  <!-- Search Box -->
+  <div class="form-group">
+    <input id="search-box" type="text" class="form-control" placeholder="Search projects..." />
+  </div>
+
+  <div class="thumbnails gallery">
+    <!-- Example with separate data-filter and data-tag -->
+    <div class="col-md-3" data-tag="brand,art" data-filter="brand">
+      <div class="thumbnail">
+        <img alt="270x170" src="http://placehold.it/270x170">
+        <div class="caption">
+          <h4>Brand and Art Project</h4>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3" data-tag="art,media" data-filter="art">
+      <div class="thumbnail">
+        <img alt="270x170" src="http://placehold.it/270x170">
+        <div class="caption">
+          <h4>Art and Media Project</h4>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3" data-tag="brand" data-filter="media">
+      <div class="thumbnail">
+        <img alt="270x170" src="http://placehold.it/270x170">
+        <div class="caption">
+          <h4>Media Project</h4>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3" data-tag="brand" data-filter="brand">
+      <div class="thumbnail">
+        <img alt="270x170" src="http://placehold.it/270x170">
+        <div class="caption">
+          <h4>Brand Project</h4>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let activeFilter = 'all'; // Track the currently active filter
+
+  // Update activeFilter when a filter button is clicked
+  $(document).on("click", ".filter-button", function() {
+    activeFilter = $(this).data("filter").toLowerCase();
+
+    // Show/hide items based on the active filter
+    $('.gallery .col-md-3').each(function() {
+      var filterTag = $(this).data('filter').toLowerCase();
+      if (filterTag === activeFilter || activeFilter === 'all') {
+        $(this).fadeIn();
+      } else {
+        $(this).fadeOut();
+      }
+    });
+  });
+
+  // Search filter logic with respect to active filter
+  $(document).on('input', '#search-box', function() {
+    var query = $(this).val().toLowerCase();
+
+    $('.gallery .col-md-3').each(function() {
+      var tags = $(this).data('tag').toLowerCase().split(',');
+      var filterTag = $(this).data('filter').toLowerCase();
+
+      // Check if the item matches the search query and active filter
+      if (
+        (activeFilter === 'all' || filterTag === activeFilter) &&
+        (tags.some(tag => tag.includes(query)) || query === '')
+      ) {
+        $(this).fadeIn();
+      } else {
+        $(this).fadeOut();
+      }
+    });
+  });
+</script>
+

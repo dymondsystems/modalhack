@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Two Windows with 50% Width</title>
+  <style>
+    button {
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin: 10px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+  <script>
+    var firstWindow;
+    var secondWindow;
+    var enforceFocus = false;
+
+    // Open the first window (50% width, user can choose left or right)
+    function openFirstWindow(position) {
+      var width = screen.width / 2;
+      var height = screen.height;
+      var top = 0;
+      var left = position === 'left' ? 0 : screen.width / 2; // Set position to left or right
+
+      firstWindow = window.open('https://infowars.com', 'firstwidnow', `width=${width},height=${height},top=${top},left=${left}`);
+      firstWindow.document.write('<h1>This is the First Window</h1>');
+
+      // Enforce focus on the first window
+      enforceFocus = true;
+      firstWindow.focus();
+    }
+
+    // Open the second window (50% width, user can choose left or right)
+    function openSecondWindow(position) {
+      var width = screen.width / 2;
+      var height = screen.height;
+      var top = 0;
+      var left = position === 'left' ? 0 : screen.width / 2; // Set position to left or right
+
+      secondWindow = window.open('', 'secondWindow', `width=${width},height=${height},top=${top},left=${left}`);
+      secondWindow.document.write('<h1>This is the Second Window</h1>');
+
+      // Focus on the first window to maintain the behavior
+      if (firstWindow && !firstWindow.closed) {
+        firstWindow.focus();
+      }
+    }
+
+    // Button to open both windows, left for the first and right for the second
+    function openBothWindowsLeft() {
+      openFirstWindow('left');
+      setTimeout(() => openSecondWindow('right'), 1000); // Open second window on the right
+    }
+
+    // Button to open both windows, right for the first and left for the second
+    function openBothWindowsRight() {
+      openFirstWindow('right');
+      setTimeout(() => openSecondWindow('left'), 1000); // Open second window on the left
+    }
+
+    // Enforce focus on the first window and keep it focused
+    function enforceFocusOnFirstWindow() {
+      if (firstWindow && !firstWindow.closed) {
+        firstWindow.focus();
+        enforceFocus = true;
+      }
+    }
+
+    // Add event listener to stop focus enforcement when interacting with the windows
+    window.addEventListener('focus', function () {
+      if (enforceFocus && firstWindow && !firstWindow.closed) {
+        firstWindow.focus();
+      }
+    });
+
+  </script>
+</head>
+<body>
+
+  <button onclick="openBothWindowsLeft()">Open Both Windows (Left-Right)</button>
+  <button onclick="openBothWindowsRight()">Open Both Windows (Right-Left)</button>
+  <button onclick="enforceFocusOnFirstWindow()">Enforce Focus on First Window</button>
+
+</body>
+</html>

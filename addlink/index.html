@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom Pop-up Window with Sidebar</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    #popUpSidebar {
+      position: fixed;
+      width: 200px; /* Sidebar width */
+      background-color: #007bff;
+      color: white;
+      z-index: 9999;
+      transition: all 0.2s ease; /* Smooth transition for sidebar movement */
+      opacity: 0; /* Initially invisible */
+      visibility: hidden; /* Sidebar hidden initially */
+      pointer-events: none; /* Disable interactions when hidden */
+      padding:20px;
+    }
+
+    #popUpSidebar.show {
+      opacity: 1; /* Fully visible */
+      visibility: visible; /* Make visible */
+      pointer-events: auto; /* Enable interactions */
+    }
+
+    #popUpSidebar button {
+      display: block;
+      width: 100%;
+      background-color: #0056b3;
+      color: white;
+      border: none;
+      padding: 10px;
+      margin: 5px 0;
+      cursor: pointer;
+      position: relative;
+    }
+
+    #popUpSidebar button:hover {
+      background-color: #003f7f;
+    }
+
+    #popUpSidebar button .remove-btn {
+      display: none;
+      position: absolute;
+      top: 40%;
+      right: 15px;
+      transform: translate(50%,-50%);
+      
+      color: white;
+      border: none;
+      border-radius: 0%;
+      width: 5px;
+      height: 0px;
+      cursor: pointer;
+      text-align: center;
+      line-height: 0px;
+      
+      
+      font-size: 12px;
+    }
+
+    #popUpSidebar button:hover .remove-btn {
+      display: block;
+    }
+
+    .content input {
+      margin-bottom: 10px;
+    }
+    add{
+    font-size: 20px;
+    font-weight: bold;
+    float: left;
+  
+    }
+  </style>
+  <script>
+    let newWindow;
+    let interval;
+
+    // Function to open the pop-up window
+    function openWindow() {
+      const width = screen.width - 200;
+      const height = screen.height - 100;
+      const left = 100;
+      const top = 50;
+
+      newWindow = window.open(
+        '/test',
+        'popUpWindow',
+        `width=${width},height=${height},top=${top},left=${left}`
+      );
+
+      interval = setInterval(() => {
+        if (newWindow && !newWindow.closed) {
+          updateSidebarPosition(newWindow);
+          checkWindowState(newWindow);
+        } else {
+          clearInterval(interval);
+          hideSidebar();
+        }
+      }, 100);
+    }
+
+    // Function to update the sidebar's position
+    function updateSidebarPosition(win) {
+      const sidebar = document.getElementById('popUpSidebar');
+      if (win && sidebar) {
+        const windowX = win.screenX || win.screenLeft;
+        const windowY = win.screenY || win.screenTop;
+        const windowWidth = win.innerWidth;
+        const windowHeight = win.innerHeight;
+
+        sidebar.style.left = `${windowX + windowWidth}px`;
+        sidebar.style.top = `${windowY}px`;
+        sidebar.style.height = `${windowHeight}px`;
+        sidebar.classList.add('show');
+      }
+    }
+
+    // Function to hide the sidebar
+    function hideSidebar() {
+      const sidebar = document.getElementById('popUpSidebar');
+      if (sidebar) {
+        sidebar.classList.remove('show');
+      }
+    }
+
+    // Function to dynamically add a button
+    function addDynamicButton() {
+      const urlInput = document.getElementById('dynamicUrl');
+      const nameInput = document.getElementById('dynamicName');
+      const url = urlInput.value;
+      const name = nameInput.value;
+
+      if (url && name) {
+        const button = document.createElement('button');
+        button.textContent = name;
+        button.onclick = () => {
+          if (newWindow && !newWindow.closed) {
+            newWindow.location.href = url;
+          }
+        };
+
+        const removeBtn = document.createElement('button');
+        removeBtn.textContent = 'x';
+        removeBtn.className = 'remove-btn';
+        removeBtn.onclick = (event) => {
+          event.stopPropagation();
+          button.remove();
+        };
+
+        button.appendChild(removeBtn);
+
+        const sidebar = document.getElementById('popUpSidebar');
+        sidebar.appendChild(button);
+
+        // Clear inputs
+        urlInput.value = '';
+        nameInput.value = '';
+
+        // Collapse the collapsible div
+        const collapsibleContent = document.getElementById('dynamicButtonSection');
+        $(collapsibleContent).collapse('hide');
+      }
+    }
+  </script>
+</head>
+<body>
+  <div id="popUpSidebar">
+    <button onclick="openWindow()">Open Window</button>
+
+    <button class="btn btn-secondary btn-block" data-toggle="collapse" data-target="#dynamicButtonSection" aria-expanded="false" aria-controls="dynamicButtonSection"><add>+</add> Quick link</button>
+    <div class="collapse" id="dynamicButtonSection">
+      <div class="content">
+      <p>Create a short cut navigation button by adding the link to the page you want and adding a button name</p>
+        <input type="text" id="dynamicUrl" placeholder="Enter URL" class="form-control">
+        <input type="text" id="dynamicName" placeholder="Enter Button Name" class="form-control">
+        <button class="btn btn-success btn-block" data-toggle="collapse" data-target="#dynamicButtonSection" aria-expanded="false" aria-controls="dynamicButtonSection" onclick="addDynamicButton()">Add</button>
+      </div>
+    </div>
+  </div>
+
+  <button onclick="openWindow()">Launch Window</button>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

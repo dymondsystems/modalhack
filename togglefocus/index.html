@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Window Refocus Example</title>
+</head>
+<body>
+  <button id="toggleWindowBtn">Open/Refocus Window</button>
+
+  <script>
+    let windowRef = null;
+
+    document.getElementById("toggleWindowBtn").addEventListener("click", function () {
+      if (windowRef === null || windowRef.closed) {
+        // If windowRef is null (no window opened) or closed, open a new window
+        windowRef = window.open("https://github.com", "exampleWindow", "width=600,height=400");
+      } else {
+        // If the window is open and not closed, refocus it
+        windowRef.focus();
+      }
+    });
+
+    // To handle the case when the user closes the window manually
+    window.addEventListener('unload', function () {
+      if (windowRef && windowRef.closed) {
+        windowRef = null;  // Reset window reference when it's closed
+      }
+    });
+  </script>
+</body>
+</html>
